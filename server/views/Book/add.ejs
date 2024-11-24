@@ -1,0 +1,41 @@
+<%- include ../Partials/header.ejs%>
+<%- include ../Partials/main_nav.ejs%>
+<!--Content for Add Page-->
+<div class="bg-image d-flex align-items-center justify-content-center">
+    <div class="container ">
+        <div class="row">
+            <div class="offset-md-3 col-md-6">
+                <div class="p-4 border border-primary rounded shadow bg-light">
+                    <h1><%= title %></h1>
+                    <form class="form" method="POST">
+                        <div class="form-group">
+                            <label for="workoutnumTextField">Workout Plan #</label>
+                            <input type="text" class="form-control" id="workoutnumTextField" placeholder="Enter Workout Plan #" name="PlanNum" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="authorTextField">Muscles being worked on</label>
+                            <input type="text" class="form-control" id="authorTextField" placeholder="Enter muscles being worked" name="Muscles" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="dayTextField">What day of the week do you plan to work out on</label>
+                            <input type="text" class="form-control" id="dayTextField" placeholder="Enter the day of the week" name="Day" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="workoutsTextArea">Workouts</label>
+                            <textarea type="text" class="form-control" id="workoutsTextArea"  placeholder="Enter Workouts" name="Workouts" required></textarea>
+                        </div>
+                        <div class="form-group">
+                            <label for="durationTextField">How long do you intend to workout for</label>
+                            <input type="text" class="form-control" id="durationTextField" placeholder="Duration" name="Duration" required>
+                        </div>
+                        <button class="btn btn-primary" type="submit">Submit
+                        <i class="fas fa-edit"></i></button>  
+                        <button class="btn btn-warning" type="reset">Cancel
+                            <i class="fas fa-undo"></i></button>    
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<%- include ../Partials/footer.ejs%>

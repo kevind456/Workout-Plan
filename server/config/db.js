@@ -1,0 +1,1 @@
+module.exports={"URI":"mongodb+srv://kd:diddy123@cluster0.6eori.mongodb.net/Tracker"}
