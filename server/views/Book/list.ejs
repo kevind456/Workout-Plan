@@ -1,0 +1,151 @@
+<%- include ../Partials/header.ejs%>
+<%- include ../Partials/main_nav.ejs%>
+<!--Book Database-->
+<main class="container">
+    <!-- Main container to structure the content using Bootstrap's grid system -->
+    <div class="row">
+        <!-- Row to create a horizontal group of columns -->
+        <div class="offset-md-1 col-md-10">
+            <!-- Offset column by 1 on medium screens and occupy 10 columns for centering -->            
+            <!-- Page Title -->
+            <h1><%= title %></h1>
+            <br>
+            <!-- Button to add a new workout plan -->
+            <a href="/plan/add" class="btn btn-primary" role="button">
+                <i class="fas fa-plus-circle"></i> Add Workout
+            </a>
+            <!-- Table to display workout plans -->
+            <table class="table table-bordered table-striped table-hover">
+                <!-- Header row with column names -->
+                <tr class="d-flex">
+                    <!-- Columns with Bootstrap classes for responsive design -->
+                    <th class="text-center col-2">Workout Plan #</th>
+                    <th class="text-center col-2">Muscles Worked</th>
+                    <th class="text-center col-1">Day of the week</th>
+                    <th class="col-4">Workouts</th>
+                    <th class="text-center col-1">Duration</th>
+                </tr>
+                <!-- Loop through the `BookList` array and render each item dynamically -->
+                <% for(let count=0; count < BookList.length; count++) { %>
+                <tr class="d-flex">
+                    <!-- Display workout plan number -->
+                    <td class="text-center col-2"><%= BookList[count].PlanNum %></td>
+                    <!-- Display muscles worked -->
+                    <td class="text-center col-2"><%= BookList[count].Muscles %></td>
+                    <!-- Display day of the week -->
+                    <td class="text-center col-1"><%= BookList[count].Day %></td>
+                    <!-- Display workouts as a string -->
+                    <td class="col-4"><%= BookList[count].Workouts %></td>
+                    <!-- Display workout duration -->
+                    <td class="text-center col-1"><%= BookList[count].Duration %></td>
+                    <!-- Edit button to navigate to the edit page for the current workout plan -->
+                    <td class="text-center col-1">
+                        <a href="/plan/edit/<%= BookList[count]._id %>" class="btn btn-primary btn-sm">
+                            <i class="fas fa-pencil-alt"></i> Edit
+                        </a>
+                    </td>
+                    <!-- Delete button with data attributes to store the plan ID and name -->
+                    <td class="text-center col-1">
+                        <button 
+                            class="btn btn-danger btn-sm delete-btn" 
+                            data-id="<%= BookList[count]._id %>" 
+                            data-name="<%= BookList[count].PlanNum %>">
+                            <i class="fas fa-trash-alt"></i> Delete
+                        </button>
+                    </td>
+                </tr>
+                <% } %>
+            </table>
+        </div>
+    </div>
+</main>
+<!-- Confirmation Modal -->
+<!-- This section defines the modal for confirming delete actions -->
+<div id="delete-confirmation-modal">
+    <div class="modal-content">
+        <!-- The confirmation message dynamically shows the name of the item to delete -->
+        <p>Are you sure you want to delete workout plan <span id="modal-item-name"></span>?</p>
+        <!-- Button for confirming the deletion -->
+        <button id="confirm-delete" class="btn btn-danger">Yes</button>
+        <!-- Button for canceling the deletion -->
+        <button id="cancel-delete" class="btn btn-secondary">No</button>
+    </div>
+</div>
+
+<!-- Confirmation Modal Logic -->
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+    // Select all elements with the class 'delete-btn' (buttons that trigger the modal)
+    const deleteButtons = document.querySelectorAll(".delete-btn");
+    // Reference to the modal element
+    const modal = document.getElementById("delete-confirmation-modal");
+    // Reference to the span where the name of the item will be displayed
+    const modalItemName = document.getElementById("modal-item-name");
+    // Buttons inside the modal for confirm and cancel actions
+    const confirmDeleteButton = document.getElementById("confirm-delete");
+    const cancelDeleteButton = document.getElementById("cancel-delete");
+    // Variable to store the ID of the item to be deleted
+    let currentItemId = null;
+
+    // Add event listeners to all delete buttons
+    deleteButtons.forEach(button => {
+        button.addEventListener("click", event => {
+            event.preventDefault();  // Prevent any default action, like following a link
+
+            // Get the item ID and name from the button's data attributes
+            currentItemId = button.getAttribute("data-id");  // Example: <button data-id="123">
+            const itemName = button.getAttribute("data-name"); // Example: <button data-name="Plan A">
+
+            // Set the item name in the modal to inform the user what they're deleting
+            modalItemName.textContent = itemName;
+
+            // Display the modal by adding a CSS class (e.g., `.show` may make it visible with CSS)
+            modal.classList.add("show");
+        });
+    });
+
+    // Confirm delete button click event
+    confirmDeleteButton.addEventListener("click", async () => {
+        if (currentItemId) {
+            try {
+                // Send a GET request to the server to delete the item
+                const response = await fetch(`/plan/delete/${currentItemId}`, { method: "GET" });
+                // If the request succeeds, reload the page to reflect changes
+                if (response.ok) {
+                    location.reload();
+                } else {
+                    // Show an error message if the deletion fails
+                    alert("Failed to delete the item. Please try again.");
+                }
+            } catch (error) {
+                // Log and show an error message if there's an issue with the request
+                console.error("Error during delete:", error);
+                alert("An error occurred while deleting the item.");
+            }
+        }
+        // Hide the modal after the action
+        modal.classList.remove("show");
+        // Clear the stored item ID
+        currentItemId = null;
+    });
+
+    // Cancel delete button click event
+    cancelDeleteButton.addEventListener("click", () => {
+        // Simply hide the modal without taking further action
+        modal.classList.remove("show");
+        currentItemId = null; // Clear the stored item ID
+    });
+
+    // Optional: Close the modal if the user clicks outside of the modal content
+    modal.addEventListener("click", (event) => {
+        if (event.target === modal) {
+            // Hide the modal if the click is outside the modal content
+            modal.classList.remove("show");
+            currentItemId = null; // Clear the stored item ID
+        }
+    });
+});
+</script>
+
+
+<%- include ../Partials/footer.ejs%>
